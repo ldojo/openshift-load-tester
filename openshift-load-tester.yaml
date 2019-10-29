@@ -1,0 +1,74 @@
+apiVersion: template.openshift.io/v1
+kind: Template
+labels:
+  template: openshift-load-tester
+message: |-
+  A complete Load Testing mechanism using Gatling
+metadata:
+  annotations:
+    description: |-
+      Launches a number of configured Gatling load test pods to exercise a target URL
+    openshift.io/display-name: Pipeline Build Example
+    tags: instant-app,jenkins
+  name: openshift-load-tester
+objects:
+- apiVersion: v1
+  kind: BuildConfig
+  metadata:
+    annotations:
+#      pipeline.alpha.openshift.io/uses: '[{"name": "${NAME}", "namespace": "", "kind":
+#        "DeploymentConfig"}]'
+    labels:
+      name: load-test-orchestrator
+    name: load-test-orchestrator
+  spec:
+    source:
+      contextDir: orchestrator
+      git:
+        ref: master
+        uri: https://github.com/ldojo/openshift-load-tester
+      type: Git
+    strategy:
+      type: JenkinsPipeline
+    triggers:
+    - github:
+        secret: secret101
+      type: GitHub
+    - generic:
+        secret: secret101
+      type: Generic
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    annotations:
+      description: Keeps track of changes in the application image
+    name: gatling-load-tester
+- apiVersion: v1
+  kind: BuildConfig
+  metadata:
+    annotations:
+      description: Defines how to build the application
+    name: gatling-load-tester
+  spec:
+    output:
+      to:
+        kind: ImageStreamTag
+        name: gatling-load-tester:latest
+    source:
+      contextDir: gatling-load-tester
+      git:
+        ref: master
+        uri: https://github.com/ldojo/openshift-load-tester
+      type: Git
+    strategy:
+      sourceStrategy:
+      type: Docker
+parameters:
+- description: The OpenShift Namespace where the NodeJS and MongoDB ImageStreams reside.
+  displayName: Namespace
+  name: NAMESPACE
+  required: true
+  valueFrom:
+    fieldRef:
+      apiVersion: v1
+      fieldPath: metadata.namespace

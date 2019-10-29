@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: BuildConfig
+metadata:
+  annotations:
+    pipeline.alpha.openshift.io/uses: '[{"name": "${NAME}", "namespace": "", "kind":
+      "DeploymentConfig"}]'
+  labels:
+    name: sample-pipeline
+  name: sample-pipeline
+spec:
+  strategy:
+    jenkinsPipelineStrategy:
+      jenkinsfile: "try {\n   timeout(time: 20, unit: 'MINUTES') {\n      node('nodejs')
+        {\n          stage('build') {\n            openshiftBuild(buildConfig: '${NAME}',
+        showBuildLogs: 'true')\n          }\n          stage('deploy') {\n            openshiftDeploy(deploymentConfig:
+        '${NAME}')\n          }\n        }\n   }\n} catch (err) {\n   echo \"in
+        catch block\"\n   echo \"Caught: ${err}\"\n   currentBuild.result = 'FAILURE'\n
+        \  throw err\n}          "
+    type: JenkinsPipeline
+  triggers:
+  - github:
+      secret: secret101
+    type: GitHub
+  - generic:
+      secret: secret101
+    type: Generic
