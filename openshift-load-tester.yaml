@@ -23,20 +23,11 @@ objects:
     name: load-test-orchestrator
   spec:
     source:
-      contextDir: orchestrator
       git:
-        ref: master
         uri: https://github.com/ldojo/openshift-load-tester
-      type: Git
     strategy:
-      type: JenkinsPipeline
-    triggers:
-    - github:
-        secret: secret101
-      type: GitHub
-    - generic:
-        secret: secret101
-      type: Generic
+      jenkinsPipelineStrategy:
+        jenkinsfilePath: orchestrator/Jenkinsfile
 - apiVersion: v1
   kind: ImageStream
   metadata:

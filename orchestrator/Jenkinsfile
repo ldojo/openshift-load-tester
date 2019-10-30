@@ -1,3 +1,19 @@
-openshift.withCluster() { // Use "default" cluster or fallback to OpenShift cluster detection
-    echo "Hello from the project running Jenkins: ${openshift.project()}"
+stage('build'){
+  openshift.withCluster() { // Use "default" cluster or fallback to OpenShift cluster detection
+      echo "Hello from the project running Jenkins: ${openshift.project()}"
+      def gatlingLoadTesterBuildConfig = openshift.selector('bc/gatling-load-tester')
+      gatlingLoadTesterBuildConfig.startBuild()
+      gatlingLoadTesterBuildConfig.logs('-f')
+      gatlingLoadTesterBuildConfig.related('builds').untilEach(1) {
+        return it.object().status.phase == "Complete"
+      }
+  }
+}
+
+stage('load){
+  openshift.withCluster() { // Use "default" cluster or fallback to OpenShift cluster detection
+    echo "Hello in stage load from the project running Jenkins: ${openshift.project()}"
+    def gatlingLoadTesterImageStream = openshift.selector('is/gatling-load-tester')
+    echo "image stream is: ${gatlingLoadTesterImageStream.object().status.dockerImageRepository}"
+  }
 }
