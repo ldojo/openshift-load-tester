@@ -38,6 +38,6 @@ stage('load'){
     }
 
     echo "delete load test job"
-    openshift.selector("job/gatling-load-test-job").delete()
+    //openshift.selector("job/gatling-load-test-job").delete()
   }
 }
