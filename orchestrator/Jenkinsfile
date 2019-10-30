@@ -17,22 +17,22 @@ stage('load'){
     echo "image stream is: ${gatlingLoadTesterImageStream.object().status.dockerImageRepository}"
     try{
       openshift.selector('template/openshift-load-tester-job').delete()
-      "previous template openshift-load-tester-job deleted"
+      echo "previous template openshift-load-tester-job deleted"
     }catch (e){
-      "creating template openshift-load-tester-job"
+      echo "creating template openshift-load-tester-job"
     }
 
     openshift.create(readFile("${env.WORKSPACE}@script/openshift-load-tester-job.yaml"))
 
     try{
-      openshift.selector('job/gatling-load-tester-job').delete()
-      "previous job gatling-load-tester-job deleted"
+      openshift.selector('job/gatling-load-test-job').delete()
+      echo "previous job gatling-load-test-job deleted"
     }catch (e){
-      "creating job gatling-load-tester-job"
+      echo "creating job gatling-load-test-job"
     }
 
     openshift.create(openshift.process("openshift-load-tester-job", "-p", "IMAGE=${gatlingLoadTesterImageStream.object().status.dockerImageRepository}"))
-    "Waiting for load test pods to complete.."
+    echo "Waiting for load test pods to complete.."
     openshift.selector('job/openshift-load-tester-job').untilEach(1){
       return it.object().status.completionTime != null
     }
