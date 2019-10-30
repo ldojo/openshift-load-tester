@@ -1,7 +1,7 @@
 apiVersion: template.openshift.io/v1
 kind: Template
 labels:
-  template: openshift-load-tester
+  template: openshift-load-tester-job
 message: |-
   A complete Load Testing mechanism using Gatling
 metadata:
@@ -10,7 +10,7 @@ metadata:
       Launches a number of configured Gatling load test pods to exercise a target URL
     openshift.io/display-name: Pipeline Build Example
     tags: instant-app,jenkins
-  name: openshift-load-tester
+  name: openshift-load-tester-job
 objects:
 - apiVersion: batch/v1
   kind: Job
