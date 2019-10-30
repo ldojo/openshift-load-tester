@@ -15,7 +15,6 @@ stage('load'){
     echo "Hello in stage load from the project running Jenkins: ${openshift.project()}"
     def gatlingLoadTesterImageStream = openshift.selector('is/gatling-load-tester')
     echo "image stream is: ${gatlingLoadTesterImageStream.object().status.dockerImageRepository}"
-    openshift.raw("run gatling-load-test-job --image=${gatlingLoadTesterImageStream.object().status.dockerImageRepository} --replicas=1 --restart=Never")
-    openshift.raw("scale job gatling-load-test-job --replicas=3")
+    openshift.create(readFile('openshift-load-tester-job.yaml'))
   }
 }
