@@ -22,6 +22,6 @@ stage('load'){
       "creating template openshift-load-tester-job"
     }
     openshift.create(readFile("${env.WORKSPACE}@script/openshift-load-tester-job.yaml"))
-    openshift.process("openshift-load-tester-job", "-p", "IMAGE=${gatlingLoadTesterImageStream.object().status.dockerImageRepository}")
+    openshift.create(openshift.process("openshift-load-tester-job", "-p", "IMAGE=${gatlingLoadTesterImageStream.object().status.dockerImageRepository}"))
   }
 }
