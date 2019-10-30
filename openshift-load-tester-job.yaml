@@ -38,7 +38,7 @@ objects:
         volumes:
           - name: loadtest
             persistentVolumeClaim:
-              claimName: loadtest
+              claimName: loadtestclaim
 parameters:
 - description: The docker image of the Gatling load tester
   displayName: Image
