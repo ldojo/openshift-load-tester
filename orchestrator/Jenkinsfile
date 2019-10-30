@@ -15,7 +15,12 @@ stage('load'){
     echo "Hello in stage load from the project running Jenkins: ${openshift.project()}"
     def gatlingLoadTesterImageStream = openshift.selector('is/gatling-load-tester')
     echo "image stream is: ${gatlingLoadTesterImageStream.object().status.dockerImageRepository}"
-    openshift.selector('template/openshift-load-tester-job').delete()
+    try{
+      openshift.selector('template/openshift-load-tester-job').delete()
+      "previous template openshift-load-tester-job deleted"
+    }catch (e){
+      "creating template openshift-load-tester-job"
+    }
     openshift.create(readFile("${env.WORKSPACE}@script/openshift-load-tester-job.yaml"))
     openshift.process("openshift-load-tester-job", "-p", "IMAGE=${gatlingLoadTesterImageStream.object().status.dockerImageRepository}")
   }
