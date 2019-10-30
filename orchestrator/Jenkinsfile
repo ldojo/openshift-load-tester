@@ -36,6 +36,8 @@ stage('load'){
     openshift.selector('job/gatling-load-test-job').untilEach(1){
       return it.object().status.completionTime != null
     }
+
+    echo "delete load test job"
     openshift.selector("job/gatling-load-test-job").delete()
   }
 }

@@ -26,7 +26,19 @@ objects:
         containers:
         - name: gatling-load-tester
           image: ${IMAGE}
+          env:
+            - name: GATLING_LOG_DIR
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+          volumeMounts:
+          - mountPath: /opt/gatling
+            name: loadtest
         restartPolicy: Never
+        volumes:
+          - name: loadtest
+            persistentVolumeClaim:
+              claimName: loadtest
 parameters:
 - description: The docker image of the Gatling load tester
   displayName: Image
