@@ -23,5 +23,10 @@ stage('load'){
     }
     openshift.create(readFile("${env.WORKSPACE}@script/openshift-load-tester-job.yaml"))
     openshift.create(openshift.process("openshift-load-tester-job", "-p", "IMAGE=${gatlingLoadTesterImageStream.object().status.dockerImageRepository}"))
+    "Waiting for load test pods to complete.."
+    openshift.selector('pod', [job-name: 'openshift-load-tester-job']).untilEach(1){
+      return it.object().status.phase == "Complete"
+    }
+    openshift.selector("job/openshift-load-tester-job").delete()
   }
 }
