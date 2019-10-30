@@ -33,9 +33,9 @@ stage('load'){
 
     openshift.create(openshift.process("openshift-load-tester-job", "-p", "IMAGE=${gatlingLoadTesterImageStream.object().status.dockerImageRepository}"))
     echo "Waiting for load test pods to complete.."
-    openshift.selector('job/openshift-load-tester-job').untilEach(1){
+    openshift.selector('job/gatling-load-test-job').untilEach(1){
       return it.object().status.completionTime != null
     }
-    openshift.selector("job/openshift-load-tester-job").delete()
+    openshift.selector("job/gatling-load-test-job").delete()
   }
 }
