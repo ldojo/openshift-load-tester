@@ -10,7 +10,7 @@ stage('build'){
   }
 }
 
-stage('load){
+stage('load'){
   openshift.withCluster() { // Use "default" cluster or fallback to OpenShift cluster detection
     echo "Hello in stage load from the project running Jenkins: ${openshift.project()}"
     def gatlingLoadTesterImageStream = openshift.selector('is/gatling-load-tester')
