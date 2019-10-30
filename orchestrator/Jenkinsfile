@@ -21,7 +21,16 @@ stage('load'){
     }catch (e){
       "creating template openshift-load-tester-job"
     }
+
     openshift.create(readFile("${env.WORKSPACE}@script/openshift-load-tester-job.yaml"))
+
+    try{
+      openshift.selector('job/openshift-load-tester-job').delete()
+      "previous job openshift-load-tester-job deleted"
+    }catch (e){
+      "creating job openshift-load-tester-job"
+    }
+
     openshift.create(openshift.process("openshift-load-tester-job", "-p", "IMAGE=${gatlingLoadTesterImageStream.object().status.dockerImageRepository}"))
     "Waiting for load test pods to complete.."
     openshift.selector('job/openshift-load-tester-job').untilEach(1){
