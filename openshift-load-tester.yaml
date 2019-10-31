@@ -2,6 +2,7 @@ apiVersion: template.openshift.io/v1
 kind: Template
 labels:
   template: openshift-load-tester
+  app: load-tester
 message: |-
   A complete Load Testing mechanism using Gatling
 metadata:
@@ -47,6 +48,32 @@ objects:
         name: gatling-load-tester:latest
     source:
       contextDir: gatling-load-tester
+      git:
+        ref: master
+        uri: https://github.com/ldojo/openshift-load-tester
+      type: Git
+    strategy:
+      sourceStrategy:
+      type: Docker
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    annotations:
+      description: Keeps track of changes in the application image
+    name: gatling-report-collater
+- apiVersion: v1
+  kind: BuildConfig
+  metadata:
+    annotations:
+      description: Defines how to build the application
+    name: gatling-report-collater
+  spec:
+    output:
+      to:
+        kind: ImageStreamTag
+        name: gatling-report-collater:latest
+    source:
+      contextDir: gatling-report-collater
       git:
         ref: master
         uri: https://github.com/ldojo/openshift-load-tester

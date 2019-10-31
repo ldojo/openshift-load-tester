@@ -1,41 +1,34 @@
 apiVersion: template.openshift.io/v1
 kind: Template
 labels:
-  template: openshift-load-tester-job
+  template: openshift-report-collater-job
   app: load-tester
 message: |-
-  A complete Load Testing mechanism using Gatling
+  collates reports from multiple gatling runs into a single report
 metadata:
   annotations:
     description: |-
-      Launches a number of configured Gatling load test pods to exercise a target URL
-    openshift.io/display-name: Pipeline Build Example
+      collates reports from multiple gatling runs into a single report
+    openshift.io/display-name: Gatling Report Collater
     tags: instant-app,jenkins
-  name: openshift-load-tester-job
+  name: openshift-report-collater-job
 objects:
 - apiVersion: batch/v1
   kind: Job
   metadata:
-    name: gatling-load-test-job
+    name: gatling-report-collater-job
   spec:
-    parallelism: 3
-    completions: 3
+    parallelism: 1
+    completions: 1
     template:
       metadata:
-        name: gatling-load-test-job
+        name: gatling-report-collater-job
       spec:
         containers:
-        - name: gatling-load-tester
+        - name: gatling-report-collater
           image: ${IMAGE}
-          env:
-            - name: GATLING_LOG_DIR
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.name
-            - name: GATLING_REPORT_DIR
-              value: ${GATLING_REPORT_DIR}
           volumeMounts:
-          - mountPath: /opt/gatling
+          - mountPath: /opt/gatling/${GATLING_REPORT_DIR}
             name: loadtest
         restartPolicy: Never
         volumes:

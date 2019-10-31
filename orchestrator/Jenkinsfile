@@ -1,7 +1,17 @@
-stage('build'){
+stage('build-load-tester'){
   openshift.withCluster() { // Use "default" cluster or fallback to OpenShift cluster detection
-      echo "Hello from the project running Jenkins: ${openshift.project()}"
       def gatlingLoadTesterBuildConfig = openshift.selector('bc/gatling-load-tester')
+      gatlingLoadTesterBuildConfig.startBuild()
+      gatlingLoadTesterBuildConfig.logs('-f')
+      gatlingLoadTesterBuildConfig.related('builds').untilEach(1) {
+        return it.object().status.phase == "Complete"
+      }
+  }
+}
+
+stage('build-report-collater'){
+  openshift.withCluster() { // Use "default" cluster or fallback to OpenShift cluster detection
+      def gatlingLoadTesterBuildConfig = openshift.selector('bc/gatling-report-collater')
       gatlingLoadTesterBuildConfig.startBuild()
       gatlingLoadTesterBuildConfig.logs('-f')
       gatlingLoadTesterBuildConfig.related('builds').untilEach(1) {
@@ -39,5 +49,38 @@ stage('load'){
 
     echo "delete load test job"
     //openshift.selector("job/gatling-load-test-job").delete()
+  }
+}
+
+stage('report'){
+  openshift.withCluster() { // Use "default" cluster or fallback to OpenShift cluster detection
+    def gatlingReportCollaterImageStream = openshift.selector('is/gatling-report-collater')
+    echo "image stream is: ${gatlingReportCollaterImageStream.object().status.dockerImageRepository}"
+    try{
+      openshift.selector('template/openshift-report-collater-job').delete()
+      echo "previous template openshift-report-collater-jobdeleted"
+    }catch (e){
+      echo "creating template openshift-report-collater-job"
+    }
+
+    openshift.create(readFile("${env.WORKSPACE}@script/openshift-report-collater-job.yaml"))
+
+    try{
+      openshift.selector('job/gatling-report-collater-job').delete()
+      echo "previous job gatling-report-collater-job deleted"
+    }catch (e){
+      echo "creating job gatling-report-collater-job"
+    }
+
+    openshift.create(openshift.process("openshift-report-collater-job", "-p", "IMAGE=${gatlingReportCollaterImageStream.object().status.dockerImageRepository}", "-p", "GATLING_REPORT_DIR=${env.BUILD_NUMBER}"))
+    echo "Waiting for report collater pod to complete.."
+    openshift.selector('job/gatling-report-collater-job').untilEach(1){
+      return it.object().status.completionTime != null
+    }
+
+    echo "delete load test job"
+    openshift.selector("job/gatling-load-test-job").delete()
+    openshift.selector("job/gatling-report-collater-job").delete()
+
   }
 }
