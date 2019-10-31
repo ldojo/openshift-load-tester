@@ -16,5 +16,5 @@ RUN cd ${APP_ROOT} && yum install -y wget zip unzip java-1.8.0-openjdk-headless.
 RUN chgrp -R 0 ${APP_ROOT} && \
       chmod -R g=u ${APP_ROOT} /etc/passwd
 VOLUME ${APP_ROOT}
-USER 10001
+#USER 10001
 CMD find /opt/gatling/$GATLING_REPORT_DIR  -name "*.log" | sed 's,\(.*\)\/\(.*\.log\),mv & \1_\2,' | bash; ${APP_ROOT}/gatling-charts-highcharts-bundle-$GATLING_VERSION/bin/gatling.sh -ro /opt/gatling/$GATLING_REPORT_DIR
