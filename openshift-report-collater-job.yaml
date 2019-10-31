@@ -27,8 +27,11 @@ objects:
         containers:
         - name: gatling-report-collater
           image: ${IMAGE}
+          env:
+            - name: GATLING_REPORT_DIR
+              value: ${GATLING_REPORT_DIR}
           volumeMounts:
-          - mountPath: /opt/gatling/${GATLING_REPORT_DIR}
+          - mountPath: /opt/gatling/
             name: loadtest
         restartPolicy: Never
         volumes:
