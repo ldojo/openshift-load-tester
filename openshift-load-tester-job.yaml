@@ -31,6 +31,8 @@ objects:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.name
+            - name: GATLING_REPORT_DIR
+              value: ${GATLING_REPORT_DIR}
           volumeMounts:
           - mountPath: /opt/gatling
             name: loadtest
@@ -43,4 +45,8 @@ parameters:
 - description: The docker image of the Gatling load tester
   displayName: Image
   name: IMAGE
+  required: true
+- description: the parent directory for gatling report results
+  displayName: Gatling Report directory
+  name: GATLING_REPORT_DIR
   required: true
