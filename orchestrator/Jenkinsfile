@@ -52,7 +52,7 @@ stage('load'){
   }
 }
 
-stage('report'){
+stage('collate-report'){
   openshift.withCluster() { // Use "default" cluster or fallback to OpenShift cluster detection
     def gatlingReportCollaterImageStream = openshift.selector('is/gatling-report-collater')
     echo "image stream is: ${gatlingReportCollaterImageStream.object().status.dockerImageRepository}"
@@ -81,6 +81,13 @@ stage('report'){
     echo "delete load test job"
     openshift.selector("job/gatling-load-test-job").delete()
     openshift.selector("job/gatling-report-collater-job").delete()
+
+  }
+}
+
+stage('present-report'){
+  openshift.withCluster() { // Use "default" cluster or fallback to OpenShift cluster detection
+    sh 'zip -R report.zip /opt/gatling/${env.BUILD_NUMBER}'
 
   }
 }
