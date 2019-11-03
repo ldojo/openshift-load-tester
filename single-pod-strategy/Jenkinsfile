@@ -29,7 +29,7 @@ pipeline {
             script: 'find target/gatling  -maxdepth 1 -mindepth 1 -type d',
             returnStdout: true
           ).trim()
-          archiveArtifacts artifacts: '${reportDir}', fingerprint: true
+          archiveArtifacts artifacts: ${reportDir}, fingerprint: true
           publishHTML (target: [
             allowMissing: false,
             alwaysLinkToLastBuild: false,
