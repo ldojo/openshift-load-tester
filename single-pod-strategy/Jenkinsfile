@@ -24,7 +24,7 @@ pipeline {
       steps {
         dir("single-pod-strategy"){
           sh 'mvn gatling:test'
-          archiveArtifacts artifacts: 'single-pod-strategy/target/gatling/', fingerprint: true
+          archiveArtifacts artifacts: 'target/gatling/', fingerprint: true
         }
 
       }
