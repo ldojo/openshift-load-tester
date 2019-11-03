@@ -24,6 +24,7 @@ pipeline {
       steps {
         dir("single-pod-strategy"){
           sh 'mvn gatling:test'
+          script{
           def reportDir = sh (
             script: 'find target/gatling  -maxdepth 1 -mindepth 1 -type d',
             returnStdout: true
@@ -37,6 +38,7 @@ pipeline {
             reportFiles: 'index.html',
             reportName: "RCov Report"
          ])
+         }
         }
 
       }
