@@ -22,7 +22,10 @@ pipeline {
 
     stage ('load-test'){
       steps {
-        sh 'mvn gatling:test'
+        dir("single-pod-strategy"){
+          sh 'mvn gatling:test'
+        }
+
       }
     }
   }
