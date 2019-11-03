@@ -1,7 +1,7 @@
 pipeline {
   agent {
     node {
-      label 'nodejs'
+      label 'maven'
     }
   }
   options {
@@ -17,7 +17,14 @@ pipeline {
                     }
                 }
             }
+            sh 'mkdir -p testresults; echo "test results" > testresults/test.txt'
         }
+    }
+  }
+
+  post {
+    always {
+      archiveArtifacts artifacts: 'testresults/test.txt', fingerprint: true
     }
   }
 }
