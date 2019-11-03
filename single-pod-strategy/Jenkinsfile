@@ -24,7 +24,19 @@ pipeline {
       steps {
         dir("single-pod-strategy"){
           sh 'mvn gatling:test'
-          archiveArtifacts artifacts: 'target/gatling/', fingerprint: true
+          HTML_REPORT_DIR = sh (
+            script: 'find target/gatling  -maxdepth 1 -mindepth 1 -type d'
+            returnStdout: true
+          ).trim()
+          archiveArtifacts artifacts: "${HTML_REPORT_DIR}", fingerprint: true
+          publishHTML (target: [
+            allowMissing: false,
+            alwaysLinkToLastBuild: false,
+            keepAll: true,
+            reportDir: '${HTML_REPORT_DIR}',
+            reportFiles: 'index.html',
+            reportName: "RCov Report"
+         ])
         }
 
       }
