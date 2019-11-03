@@ -24,15 +24,16 @@ pipeline {
       steps {
         dir("single-pod-strategy"){
           sh 'mvn gatling:test'
+          archiveArtifacts artifacts: 'single-pod-strategy/target/gatling/', fingerprint: true
         }
 
       }
     }
   }
 
-  post {
-    always {
-      archiveArtifacts artifacts: 'target/gatling/', fingerprint: true
-    }
-  }
+//  post {
+//    always {
+//      archiveArtifacts artifacts: 'single-pod-strategy/target/gatling/', fingerprint: true
+//    }
+//  }
 }
