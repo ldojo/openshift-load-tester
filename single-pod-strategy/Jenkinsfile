@@ -37,7 +37,7 @@ pipeline {
             alwaysLinkToLastBuild: false,
             keepAll: true,
             reportDir: "${reportDir}",
-            reportFiles: '*',
+//            reportFiles: '*',
             reportName: "RCov Report"
          ])
          }
