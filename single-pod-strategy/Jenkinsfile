@@ -31,7 +31,7 @@ pipeline {
           ).trim()
           echo pwd()
           sh 'pwd; ls'
-          archiveArtifacts artifacts: "target/gatling", fingerprint: true
+          archiveArtifacts artifacts: 'target/gatling/', fingerprint: true
           publishHTML (target: [
             allowMissing: false,
             alwaysLinkToLastBuild: false,
