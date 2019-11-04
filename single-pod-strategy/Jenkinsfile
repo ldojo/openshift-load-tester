@@ -8,7 +8,7 @@ pipeline {
   options {
     timeout(time: 20, unit: 'MINUTES')
   }
-  System.setProperty("hudson.model.DirectoryBrowserSupport.CSP","")
+
   stages {
     stage('preamble') {
         steps {
@@ -16,6 +16,7 @@ pipeline {
                 openshift.withCluster() {
                     openshift.withProject() {
                         echo "Using project: ${openshift.project()}"
+                        System.setProperty("hudson.model.DirectoryBrowserSupport.CSP","")
                     }
                 }
             }
