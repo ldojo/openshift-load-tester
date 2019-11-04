@@ -31,12 +31,12 @@ pipeline {
           ).trim()
           echo pwd()
           sh 'pwd; ls'
-          archiveArtifacts artifacts: 'target/gatling/', fingerprint: true
+          archiveArtifacts artifacts: 'target/gatling', fingerprint: true
           publishHTML (target: [
             allowMissing: false,
             alwaysLinkToLastBuild: false,
             keepAll: true,
-            reportDir: '${reportDir}',
+            reportDir: ${reportDir},
             reportFiles: 'index.html',
             reportName: "RCov Report"
          ])
