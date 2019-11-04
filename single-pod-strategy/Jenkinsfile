@@ -32,12 +32,13 @@ pipeline {
           echo pwd()
           sh 'pwd; ls'
           archiveArtifacts artifacts: "${reportDir}/", fingerprint: true
+          System.setProperty("hudson.model.DirectoryBrowserSupport.CSP","")
           publishHTML (target: [
             allowMissing: false,
             alwaysLinkToLastBuild: false,
             keepAll: true,
             reportDir: "${reportDir}",
-//            reportFiles: '*',
+            reportFiles: 'index.html',
             reportName: "RCov Report"
          ])
          }
