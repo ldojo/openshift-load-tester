@@ -2,12 +2,13 @@ pipeline {
   agent {
     node {
       label 'maven'
-      System.setProperty("hudson.model.DirectoryBrowserSupport.CSP","")
+
     }
   }
   options {
     timeout(time: 20, unit: 'MINUTES')
   }
+  System.setProperty("hudson.model.DirectoryBrowserSupport.CSP","")
   stages {
     stage('preamble') {
         steps {
